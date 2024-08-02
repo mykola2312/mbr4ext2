@@ -1,11 +1,19 @@
 CC					=	gcc
+AS					=	as
+LD					=	ld
+OBJCOPY				=	objcopy
 CLFAGS				=	-g -Wall
+ASFLAGS				=
 LDFLAGS				=	-g
+
+SRC_DIR				=	src
+OBJ_DIR				=	obj
+BIN_DIR				=	bin
 
 UID					:=	$(shell id -u)
 GID					:=	$(shell id -g)
 
-DISK				=	bin/disk.img
+DISK				=	$(BIN_DIR)/disk.img
 DISK_SIZE			=	268435456
 DISK_LOOP			=	/dev/loop690
 
@@ -83,6 +91,19 @@ $(DISK): mnt
 	sudo losetup -d $(PART2_LOOP)
 	sudo losetup -d $(PART3_LOOP)
 	sudo losetup -d $(DISK_LOOP)
+
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.s
+	$(AS) $(ASFLAGS) -o $@ $<
+	$(OBJCOPY) --remove-section .note.gnu.property $@
+
+MBR_TEST_OBJ		=	obj/mbr_test.o
+
+mbr_test: $(MBR_TEST_OBJ) $(DISK)
+	$(LD) -T src/mbr_test.ld -o $(BIN_DIR)/mbr_test.bin $(MBR_TEST_OBJ)
+
+mbr_test_clean:
+	rm $(BIN_DIR)/mbr_test.bin
+	rm $(OBJ_DIR)/mbr_test.o
 
 clean:
 	rm -f bin/*
