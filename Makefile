@@ -2,6 +2,9 @@ CC					=	gcc
 CLFAGS				=	-g -Wall
 LDFLAGS				=	-g
 
+UID					:=	$(shell id -u)
+GID					:=	$(shell id -g)
+
 DISK				=	bin/disk.img
 DISK_SIZE			=	268435456
 DISK_LOOP			=	/dev/loop690
@@ -38,7 +41,10 @@ PART3_LOOP			=	/dev/loop693
 
 .PHONY: clean
 
-$(DISK):
+mnt:
+	mkdir mnt
+
+$(DISK): mnt
 	# create img file
 	truncate -s 256m $(DISK)
 	# format img file in MBR and create partitions
@@ -60,6 +66,18 @@ $(DISK):
 	sudo mkfs.ext2 -t $(PART2_FSTYPE) -L $(PART2_LABEL) -U $(PART2_UUID) $(PART2_LOOP)
 	sudo mkfs.ext2 -t $(PART3_FSTYPE) -L $(PART3_LABEL) -U $(PART3_UUID) $(PART3_LOOP)
 	# fill EXT2 partitions
+	# mount and fill boot partition
+	sudo mount $(PART2_LOOP) mnt/		# mount
+	sudo chown -R ${UID}:${GID} mnt/	# because we ain't gonna run python with root, so own it by user
+	python gen/generate_files.py --mode=boot --dirs=gen/rootfs-dirs.gz --path=mnt
+	sudo chown -R 0:0 mnt/				# make it root
+	sudo umount mnt/					# done
+	# mount and fill root partition
+	sudo mount $(PART3_LOOP) mnt/		# mount
+	sudo chown -R ${UID}:${GID} mnt/	# because we ain't gonna run python with root, so own it by user
+	python gen/generate_files.py --mode=root --dirs=gen/rootfs-dirs.gz --path=mnt
+	sudo chown -R 0:0 mnt/				# make it root
+	sudo umount mnt/					# done
 	# detach loopback devices
 	sudo losetup -d $(PART1_LOOP)
 	sudo losetup -d $(PART2_LOOP)
