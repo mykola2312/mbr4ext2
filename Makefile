@@ -5,6 +5,7 @@ OBJCOPY				=	objcopy
 CLFAGS				=	-g -Wall
 ASFLAGS				=
 LDFLAGS				=	-g
+QEMU				=	qemu-system-x86_64
 
 SRC_DIR				=	src
 OBJ_DIR				=	obj
@@ -104,6 +105,20 @@ mbr_test: $(MBR_TEST_OBJ) $(DISK)
 mbr_test_clean:
 	rm $(BIN_DIR)/mbr_test.bin
 	rm $(OBJ_DIR)/mbr_test.o
+
+mbr_test_qemu: mbr_test
+	$(QEMU) -accel tcg,thread=single									\
+			-cpu core2duo												\
+			-m 128														\
+			-no-reboot													\
+			-serial stdio												\
+			-smp 1														\
+			-vga std													\
+			-d int														\
+			-d guest_errors												\
+			-s															\
+			-drive format=raw,media=disk,file=$(BIN_DIR)/mbr_test.bin	\
+			-drive format=raw,media=disk,file=$(BIN_DIR)/disk.img
 
 clean:
 	rm -f bin/*

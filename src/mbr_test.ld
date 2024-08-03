@@ -1,18 +1,21 @@
 MEMORY
 {
-    BOOTLOADER  (RWX)   :   ORIGIN = 0x7C00, LENGTH = 440
-    UNIQUE_ID   (R)     :   ORIGIN = 0x7DB8, LENGTH = 4
-    RESERVED    (R)     :   ORIGIN = 0x7DBC, LENGTH = 2
-    PTABLE      (R)     :   ORIGIN = 0x7DBE, LENGTH = 64
-    MBR_MAGIC   (R)     :   ORIGIN = 0x7DFE, LENGTH = 2
+    BOOTLOADER  (RWX)   :   ORIGIN = 0x0000, LENGTH = 440
+    UNIQUE_ID   (R)     :   ORIGIN = 0x01B8, LENGTH = 4
+    RESERVED    (R)     :   ORIGIN = 0x01BC, LENGTH = 2
+    PTABLE      (R)     :   ORIGIN = 0x01BE, LENGTH = 64
+    MBR_MAGIC   (R)     :   ORIGIN = 0x01FE, LENGTH = 2
 }
 
 SECTIONS
 {
-    . = 0x7C00;
+    . = 0;
     .text : {
+        BOOTLOADER_START = .;
         *(.text)
         *(.data)
+        BOOTLOADER_END = .;
+        BOOTLOADER_SIZE = BOOTLOADER_END - BOOTLOADER_START;
     } > BOOTLOADER
 
     .unique_id : {
