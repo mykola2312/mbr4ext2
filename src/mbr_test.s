@@ -24,17 +24,15 @@
     # far jump to new memory region
     jmp $0x0050,$.bootloader
 .bootloader:
+    # initialize stack
+    mov $0x07DF, %ax
+    mov %ax, %ss
+    xor %sp, %sp
 
-    mov $msg, %si
-.putc_loop:
-    lodsb
-    or %al, %al
-    jz .halt
+.entry:
+    push $msg
+    call print
 
-    mov $0x0E, %ah
-    mov $0x00, %bh
-    int $0x10
-    jmp .putc_loop
 .halt:
     jmp .halt
 
