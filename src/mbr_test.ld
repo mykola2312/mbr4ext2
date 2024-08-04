@@ -5,37 +5,33 @@ MEMORY
     RESERVED    (R)     :   ORIGIN = 0x01BC, LENGTH = 2
     PTABLE      (R)     :   ORIGIN = 0x01BE, LENGTH = 64
     MBR_MAGIC   (R)     :   ORIGIN = 0x01FE, LENGTH = 2
-
-    RAM         (RWX)   :   ORIGIN = 0x7E00, LENGTH = 492032
 }
 
 SECTIONS
 {
-    . = 0;
-    .text : {
+    .text 0x0000 : {
         BOOTLOADER_START = .;
         *(.text)
         *(.rodata)
         BOOTLOADER_END = .;
-        BOOTLOADER_SIZE = BOOTLOADER_END - BOOTLOADER_START;
-    } > BOOTLOADER
-
-    .unique_id : {
-        SHORT(0x1234)
-    } > UNIQUE_ID
-
-    .reserved : {
-        SHORT(0x0000)
-    } > RESERVED
-
-    .mbr_magic : {
-        SHORT(0xAA55)
-    } > MBR_MAGIC
-
-    .bss : {
-        *(.data)
         *(.bss)
-    } > RAM
+        BOOTLOADER_SIZE = BOOTLOADER_END - BOOTLOADER_START;
+
+        RAM = 0x7E00;
+        RAM_SEGMENT = (RAM >> 8);
+    }
+
+    .unique_id 0x01B8 : {
+        SHORT(0x1234)
+    }
+
+    .reserved 0x01BC : {
+        SHORT(0x0000)
+    }
+
+    .mbr_magic 0x01FE : {
+        SHORT(0xAA55)
+    }
 }
 
 OUTPUT_FORMAT(binary)
