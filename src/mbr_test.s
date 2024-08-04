@@ -43,6 +43,16 @@
 
     mov %ax, %si
     call prints
+
+    mov $'\n', %al
+    call serial_putc
+
+    mov $691337, %eax
+    mov $10, %ecx
+    call itoa
+
+    mov %ax, %si
+    call prints
 .halt:
     jmp .halt
 
