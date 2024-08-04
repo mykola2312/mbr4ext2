@@ -1,17 +1,20 @@
 .section .text
 .code16
 
-    # we're moving to 0050, 0x7C00 -> 0x0500
-    # so, DS is 0x07C0 and ES is 0x0050  
-    mov $0x07C0, %ax
-    mov %ax, %ds
-    mov $0x0050, %ax
-    mov %ax, %es
+    # initialize stack
+    mov $RAM_SEGMENT, %ax
+    mov %ax, %ss
+    mov $STACK_END, %sp
+
+    # we're moving to 0x7C00 -> 0x7E00
+    push $0x07C0
+    pop %ds
+    push %ss
+    pop %es
 
     # set both source and destination pointers to zero, since we using segments
-    xor %ax, %ax
-    mov %ax, %si
-    mov %ax, %di
+    xor %si, %si
+    xor %di, %di
 
     # set counter with determined size by linker
     mov $BOOTLOADER_SIZE, %cx
@@ -22,16 +25,11 @@
     loop .copy
 
     # far jump to new memory region
-    jmp $0x0050,$.bootloader
+    jmp $RAM_SEGMENT,$.bootloader
 .bootloader:
-    # initialize stack
-    mov $0x07DF, %ax
-    mov %ax, %ss
-    xor %sp, %sp
-
-    # set ES segment
-    push %ds
-    pop %es
+    # set DS segment
+    push %es
+    pop %ds
 
 .entry:
     call serial_init
