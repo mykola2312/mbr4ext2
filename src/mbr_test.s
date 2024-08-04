@@ -47,8 +47,8 @@
     mov $'\n', %al
     call serial_putc
 
-    mov $691337, %eax
-    mov $10, %ecx
+    mov $0xCAFEBABE, %eax
+    mov $16, %ecx
     call itoa
 
     mov %ax, %si
