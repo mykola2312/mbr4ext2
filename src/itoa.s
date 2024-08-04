@@ -13,24 +13,29 @@ itoa:
     mov $numbers, %bx
 
     mov $(itoa_result + ITOA_BUFFER_SIZE - 1), %di
+    movb $0, (%di)
+    dec %di
     std
 .div:
     divl %ecx
-    or %eax, %eax
-    jz .end         # we run out of numbers
 
     # yep, we're using LUT for number -> character conversion since ASCII is a fuck
     push %eax
-    add %bx, %ax
+    movb (%ebx,%edx,1), %al
     stosb
     pop %eax
 
-    jmp .div
+    xor %edx, %edx
+    
+    or %eax, %eax
+    jnz .div
 .end:
+    # we run out of numbers
     cld
 
     # we return ptr to string, since we're pushing chars in reverse, therefore
     # beginning of string will change
+    inc %di
     mov %di, %ax
 
     pop %bx
