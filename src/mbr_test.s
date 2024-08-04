@@ -36,5 +36,5 @@
 .halt:
     jmp .halt
 
-.section .data
+.section .rodata
 msg:    .asciz "Test MBR hello world\r\n"
