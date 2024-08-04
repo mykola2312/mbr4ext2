@@ -23,7 +23,6 @@
 .equ    SERIAL_MSR,         CONFIG_PORT + 6
 .equ    SERIAL_RW_SCRATCH,  CONFIG_PORT + 7
 
-# arg 1 - serial port base
 serial_init:
     # enable DLAB to setup baud divisor
     mov $(1 << 7), %al
