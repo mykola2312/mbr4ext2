@@ -29,10 +29,21 @@
     mov %ax, %ss
     xor %sp, %sp
 
+    # set ES segment
+    push %ds
+    pop %es
+
 .entry:
     call serial_init
 
     mov $msg, %si
+    call prints
+
+    mov $12345678, %eax
+    mov $10, %ecx
+    call itoa
+
+    mov %ax, %si
     call prints
 .halt:
     jmp .halt
