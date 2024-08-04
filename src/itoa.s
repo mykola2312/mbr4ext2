@@ -9,10 +9,8 @@
 # ecx - base
 itoa:
     push %bx
+    xor %edx, %edx
     mov $numbers, %bx
-
-.debug:
-    jmp .debug
 
     mov $(itoa_result + ITOA_BUFFER_SIZE - 1), %di
     std

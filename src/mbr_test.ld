@@ -5,8 +5,8 @@ MEMORY
 
 SECTIONS
 {
-    RAM = 0x7E00;
-    RAM_SEGMENT = (RAM >> 8);
+    RAM         = 0x7E00;
+    RAM_SEGMENT = 0x7E0;
 
     .text       0x0000 : {
         BOOTLOADER_START = .;
