@@ -97,7 +97,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.s
 	$(AS) $(ASFLAGS) -o $@ $<
 	$(OBJCOPY) --remove-section .note.gnu.property $@
 
-MBR_TEST_OBJ		=	obj/mbr_test.o
+MBR_TEST_OBJ		=	obj/mbr_test.o obj/print.o
 
 mbr_test: $(MBR_TEST_OBJ) $(DISK)
 	$(LD) -T src/mbr_test.ld -o $(BIN_DIR)/mbr_test.bin $(MBR_TEST_OBJ)
@@ -105,6 +105,9 @@ mbr_test: $(MBR_TEST_OBJ) $(DISK)
 mbr_test_clean:
 	rm $(BIN_DIR)/mbr_test.bin
 	rm $(OBJ_DIR)/mbr_test.o
+
+mbr_test_objdump:
+	objdump -b binary -mi386 -Maddr16,data16 -D $(BIN_DIR)/mbr_test.bin
 
 mbr_test_qemu: mbr_test
 	$(QEMU) -accel tcg,thread=single									\
