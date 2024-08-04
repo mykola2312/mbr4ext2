@@ -30,9 +30,10 @@
     xor %sp, %sp
 
 .entry:
-    push $msg
-    call print
+    call serial_init
 
+    mov $msg, %si
+    call prints
 .halt:
     jmp .halt
 
