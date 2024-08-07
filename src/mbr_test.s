@@ -36,7 +36,7 @@ entry:
 .bootloader:
     call serial_init
 
-    mov $73728, %eax
+    mov $2342424, %eax
     call lba_to_chs
 .halt:
     jmp .halt
