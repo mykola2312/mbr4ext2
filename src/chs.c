@@ -7,6 +7,8 @@ void chs_decode(const chs_encoded_t* enc, chs_t* chs)
     chs->cylinder = (((uint16_t)enc->b[1]) & 0xC0) << 2 | (uint16_t)enc->b[2];
 }
 
+// https://wiki.osdev.org/LBA
+
 uint32_t chs_to_lba(const chs_conf_t* conf, const chs_t* chs)
 {
     return (chs->cylinder * conf->num_heads + chs->head) * conf->num_sectors + (chs->sector - 1);

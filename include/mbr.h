@@ -4,6 +4,9 @@
 #include <stdint.h>
 #include "chs.h"
 
+// https://wiki.osdev.org/MBR_(x86)
+// https://en.wikipedia.org/wiki/Master_boot_record
+
 typedef struct {
     uint8_t attributes;
     chs_encoded_t chs_first;
