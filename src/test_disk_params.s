@@ -6,9 +6,9 @@
 # al - drive number
 test_disk_params:
     mov %al, %dl
-    and $128, %dl
+    or $128, %dl
 
-    mov $0x08, %al
+    mov $0x08, %ah
     int $0x13
 
     xor %ax, %ax
@@ -57,7 +57,7 @@ str_cylinders:  .asciz "Disk cylinders: "
 str_sectors:    .asciz "Disk sectors per cylinder: "
 
 .section .bss
-disk_slaves:    .word   # disk attached slaves
-disk_heads:     .word   # number of heads
-disk_cylinders: .word   # number of cylinders
-disk_sectors:   .word   # sectors in cylinder
+.lcomm disk_slaves,     2   # disk attached slaves
+.lcomm disk_heads,      2   # number of heads
+.lcomm disk_cylinders,  2   # number of cylinders
+.lcomm disk_sectors,    2   # sectors in cylinder
