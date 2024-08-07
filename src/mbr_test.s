@@ -52,14 +52,8 @@ entry:
 
     # it's working fixed disk, lets print its number
     movw disk_id, %ax
-    mov $10, %cx
-    call itoa
-
-    mov %ax, %si
-    call prints
-
-    mov $'\n', %al
-    call serial_putc
+    mov $disk_enum_msg, %si
+    call prints_number
 .disk_skip:
     decw disk_id
     jns .disk_enum
@@ -68,5 +62,8 @@ entry:
 .halt:
     jmp .halt
 
+.section .rodata
+disk_enum_msg:  .asciz  "Disk "
+
 .section .bss
-disk_id:   .word
+disk_id:        .word
