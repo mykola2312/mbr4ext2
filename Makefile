@@ -97,7 +97,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.s
 	$(AS) $(ASFLAGS) -o $@ $<
 	$(OBJCOPY) --remove-section .note.gnu.property $@
 
-MBR_TEST_OBJ		=	obj/mbr_test.o obj/serial.o obj/itoa.o obj/util.o obj/test_disk_params.o
+MBR_TEST_OBJ		=	obj/mbr_test.o obj/serial.o obj/itoa.o obj/util.o obj/test_disk_target.o
 
 mbr_test: $(MBR_TEST_OBJ) $(DISK)
 	$(LD) -T src/mbr_test.ld -o $(BIN_DIR)/mbr_test.bin $(MBR_TEST_OBJ)
