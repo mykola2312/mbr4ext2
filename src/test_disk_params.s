@@ -23,13 +23,18 @@ test_disk_params:
     mov %ch, %al
     # write higher part
     mov %cl, %ah
-    shr $3, %ah # shift 6 bits to right, because cylinder num's high part is in high 2 bits
+    shr $6, %ah # shift 6 bits to right, because cylinder num's high part is in high 2 bits
     mov %ax, disk_cylinders
     # write sectors per cylinder
     xor %ax, %ax
     mov %cl, %al
     and $0b00111111, %al # 6 lower bits are sector count
     mov %ax, disk_sectors
+
+    # these values are MAX value, so to get TOTAL need to add 1 to each one
+    incw disk_heads
+    incw disk_cylinders
+    incw disk_sectors
 
     # now we can print all this info
     movw disk_slaves, %ax
