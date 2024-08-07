@@ -56,37 +56,46 @@ lba_to_chs:
 
     xor %eax, %eax          # flush eax because it loves to screw up itoa
 
-    # now lets print C H S values
+    # convert to BIOS CHS
+    # DH - head number
+    # CH - cylinder number, lower 8 bits
+    # CL - cylinder number 2 high bits, 6 lower bits is sector count
+    
+    # head
+    mov -10(%bp), %dh
+    # cylinder
     mov -8(%bp), %ax
-    mov $str_cylinder, %si
-    call prints_number
-
-    mov -10(%bp), %ax
-    mov $str_head, %si
-    call prints_number
-
+    mov %al, %ch            # cylinder 8 low port
+    shr $6, %ah             # bump low 2 bits to high 2 bits
+    mov %ah, %cl
+    # sector
     mov -12(%bp), %ax
-    mov $str_sector, %si
-    call prints_number
+    or %al, %cl             # "apply" sector 6 bits to CL lower part
+    # we won't waste any byte more for masking, since sector calculation
+    # must have clamped value to 63 max
 
     mov %bp, %sp
     pop %bp
     ret
 
 # eax   - LBA address
-# cx    - number of sectors
+# cl    - number of sectors
 # es:di - destination
 test_disk_read:
-    # here we need to convert LBA into CHS
-    ret
+    push %cx                # we just have to push it since lba_to_chs will overwrite it
+    # convert LBA and encode it in BIOS CHS
+    call lba_to_chs
 
-# ds:si - sector
-test_disk_taste_sector:
-    # test pattern partition - each sector has 32 bit integer in beginning
-    # so we read this integer and output it, it must increment as well as LBA address
-    mov (%esi), %eax
-    mov $str_taste, %si
-    call prints_number
+    movb disk_id, %dl
+    or $0x80, %dl
+
+    pop %ax                 # now it will have number of sectors
+    mov $0x02, %ah
+    mov %di, %bx
+    int $0x13
+
+    # BUG: something funny about stack at this point
+.debug: jmp .debug
 
     ret
 
@@ -94,4 +103,3 @@ test_disk_taste_sector:
 str_cylinder:   .asciz  "Cylinder: "
 str_head:       .asciz  "Head: "
 str_sector:     .asciz  "Sector: "
-str_taste:      .asciz  "Sector test pattern: "
