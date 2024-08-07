@@ -36,6 +36,7 @@ entry:
 .bootloader:
     call serial_init
 
-    call test_disk_enum
+    mov $0x01, %al # disk 1
+    call test_disk_params
 .halt:
     jmp .halt
