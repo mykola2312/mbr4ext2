@@ -36,7 +36,19 @@ entry:
 .bootloader:
     call serial_init
 
-    mov $9999999, %eax
-    call lba_to_chs
+    mov $2048, %eax         # LBA
+    mov $1, %cl             # number of sectors
+    mov $test_sector, %di   # buffer destination
+    call test_disk_read
+
+    // mov test_sector, %eax
+    // mov $str_test_pattern, %si
+    // call prints_number
 .halt:
     jmp .halt
+
+.section .rodata
+str_test_pattern:   .asciz  "Test pattern: "
+
+.section .bss
+.comm test_sector, 512
