@@ -48,6 +48,7 @@ lba_to_chs:
     # chs->sector = (lba % conf->num_sectors + 1);
     mov -4(%bp), %eax       # LBA
     movw disk_sectors, %bx
+    xor %dx, %dx
     div %ebx
     # dx - sector, but needs +1
     inc %dx
