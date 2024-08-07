@@ -27,21 +27,32 @@ entry:
     stosb
     loop .copy
 
-    # far jump to new memory region
-    jmp $RAM_SEGMENT,$.bootloader
-.bootloader:
     # set DS segment
     push %es
     pop %ds
 
-
+    # far jump to new memory region
+    jmp $RAM_SEGMENT,$.bootloader
+.bootloader:
     call serial_init
 
-    mov $msg, %si
-    call prints
+    # enumerate all system disks
+    movw $127, disk_id
+    #mov $128, %dl # already set bit 7 to 1 for fixed disk type
+.disk_enum:
+    # set disk id in DL with fixed disk bit on
+    movw disk_id, %dx
+    or $128, %dx
 
-    mov $12345678, %eax
-    mov $10, %ecx
+    mov $0x15, %ah
+    int $0x13
+
+    cmp $3, %ah # is fixed disk
+    jnz .disk_skip
+
+    # it's working fixed disk, lets print its number
+    movw disk_id, %ax
+    mov $10, %cx
     call itoa
 
     mov %ax, %si
@@ -49,15 +60,13 @@ entry:
 
     mov $'\n', %al
     call serial_putc
+.disk_skip:
+    decw disk_id
+    jns .disk_enum
 
-    mov $0xCAFEBABE, %eax
-    mov $16, %ecx
-    call itoa
-
-    mov %ax, %si
-    call prints
+    nop
 .halt:
     jmp .halt
 
-.section .rodata
-msg:    .asciz "Test MBR hello world\r\n"
+.section .bss
+disk_id:   .word
