@@ -37,17 +37,17 @@ int main(int argc, char** argv)
     for (unsigned i = 0; i < 4; i++)
     {
         const mbr_part_t* part = &mbr.part_table[i];
-        uint16_t cylinder, head, sector;
+        chs_t chs_first, chs_last;
+
+        chs_decode(&part->chs_first, &chs_first);
+        chs_decode(&part->chs_last, &chs_last);
 
         printf("Partition:\t%u\n", i);
         printf("\tAttributes:\t%x (%s)\n", part->attributes, part->attributes & 0x80 ? "active" : "");
         printf("\tType:\t%x\n", part->type);
 
-        decode_chs(part->chs_first, &cylinder, &head, &sector);
-        printf("\tCHS First:\tC %u\tH %u\tS %u\n", cylinder, head, sector);
-        
-        decode_chs(part->chs_last, &cylinder, &head, &sector);
-        printf("\tCHS Last:\tC %u\tH %u\tS %u\n", cylinder, head, sector);
+        printf("\tCHS First:\tC %u\tH %u\tS %u\n", chs_first.cylinder, chs_first.head, chs_first.sector);
+        printf("\tCHS Last:\tC %u\tH %u\tS %u\n", chs_last.cylinder, chs_last.head, chs_last.sector);
         
         printf("\tLBA:\t%u\n", part->lba_start);
         printf("\tTotal Sectors:\t%u\n", part->num_sectors);
