@@ -7,6 +7,7 @@
 
 # eax - number
 # ecx - base
+# return - ds:si pointing to string number
 itoa:
     push %bx
     xor %edx, %edx
@@ -36,7 +37,7 @@ itoa:
     # we return ptr to string, since we're pushing chars in reverse, therefore
     # beginning of string will change
     inc %di
-    mov %di, %ax
+    mov %di, %si
 
     pop %bx
     ret
