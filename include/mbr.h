@@ -2,12 +2,13 @@
 #define __MBR_H
 
 #include <stdint.h>
+#include "chs.h"
 
 typedef struct {
     uint8_t attributes;
-    uint8_t chs_first[3];
+    chs_encoded_t chs_first;
     uint8_t type;
-    uint8_t chs_last[3];
+    chs_encoded_t chs_last;
     uint32_t lba_start;
     uint32_t num_sectors;
 } __attribute__((packed)) mbr_part_t;
