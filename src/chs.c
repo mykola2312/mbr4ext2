@@ -16,7 +16,7 @@ uint32_t chs_to_lba(const chs_conf_t* conf, const chs_t* chs)
 
 void lba_to_chs(const chs_conf_t* conf, uint32_t lba, chs_t* chs)
 {
-    chs->head = lba / (conf->num_heads * conf->num_sectors);
-    chs->cylinder = (lba / conf->num_sectors) % conf->num_heads;
-    chs->sector = (lba % conf->num_sectors) + 1;
+    chs->head = (lba % (conf->num_sectors * 2)) / conf->num_sectors;
+    chs->cylinder = (lba / (conf->num_sectors * 2));
+    chs->sector = (lba % conf->num_sectors + 1);
 }
