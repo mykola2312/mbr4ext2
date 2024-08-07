@@ -9,7 +9,7 @@ INC_DIR				=	include
 OBJ_DIR				=	obj
 BIN_DIR				=	bin
 
-CLFAGS				=	-g -Wall -I$(INC_DIR)/
+CFLAGS				=	-g -Wall -I$(INC_DIR)/
 ASFLAGS				=
 LDFLAGS				=	-g
 
@@ -128,7 +128,7 @@ mbr_test_qemu: mbr_test
 			-drive format=raw,media=disk,file=$(BIN_DIR)/mbr_test.bin	\
 			-drive format=raw,media=disk,file=$(BIN_DIR)/disk.img
 
-READMBR_OBJ			=	obj/readmbr.o
+READMBR_OBJ			=	obj/readmbr.o obj/chs.o
 
 readmbr: $(READMBR_OBJ)
 	$(CC) $(LDFLAGS) -o $(BIN_DIR)/readmbr $(READMBR_OBJ)
