@@ -44,4 +44,5 @@ SECTIONS
     }
 }
 
+ENTRY(entry)
 OUTPUT_FORMAT(binary)
