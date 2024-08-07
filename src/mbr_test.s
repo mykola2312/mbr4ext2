@@ -1,6 +1,9 @@
 .section .text
 .code16
 
+.globl entry
+
+entry:
     # initialize stack
     mov $RAM_SEGMENT, %ax
     mov %ax, %ss
@@ -31,7 +34,7 @@
     push %es
     pop %ds
 
-.entry:
+
     call serial_init
 
     mov $msg, %si
