@@ -2,14 +2,16 @@ CC					=	gcc
 AS					=	as
 LD					=	ld
 OBJCOPY				=	objcopy
-CLFAGS				=	-g -Wall
-ASFLAGS				=
-LDFLAGS				=	-g
 QEMU				=	qemu-system-x86_64
 
 SRC_DIR				=	src
+INC_DIR				=	include
 OBJ_DIR				=	obj
 BIN_DIR				=	bin
+
+CLFAGS				=	-g -Wall -I$(INC_DIR)/
+ASFLAGS				=
+LDFLAGS				=	-g
 
 UID					:=	$(shell id -u)
 GID					:=	$(shell id -g)
@@ -97,6 +99,9 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.s
 	$(AS) $(ASFLAGS) -o $@ $<
 	$(OBJCOPY) --remove-section .note.gnu.property $@
 
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	$(CC) $(CFLAGS) -c -o $@ $<
+
 MBR_TEST_OBJ		=	obj/mbr_test.o obj/serial.o obj/itoa.o obj/util.o obj/test_disk_target.o
 
 mbr_test: $(MBR_TEST_OBJ) $(DISK)
@@ -122,6 +127,11 @@ mbr_test_qemu: mbr_test
 			-s															\
 			-drive format=raw,media=disk,file=$(BIN_DIR)/mbr_test.bin	\
 			-drive format=raw,media=disk,file=$(BIN_DIR)/disk.img
+
+READMBR_OBJ			=	obj/readmbr.o
+
+readmbr: $(READMBR_OBJ)
+	$(CC) $(LDFLAGS) -o $(BIN_DIR)/readmbr $(READMBR_OBJ)
 
 clean:
 	rm -f bin/*
